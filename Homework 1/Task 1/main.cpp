@@ -13,11 +13,21 @@ bool checkgreaternumber(std::vector<int> array, int number, long unsigned int in
     return false;
 }
 
-int min(std::vector<int> array, long unsigned int index, int number) {
+int fmin(std::vector<int> array, long unsigned int index, int number) {
     int result = array[index];
     for (long unsigned int i = index; i < array.size(); ++i) {
         if (array[i] < result && number != array[i]) {
             result = array[i];
+        }
+    }
+    return result;
+}
+
+int min(std::vector<int> array, long unsigned int index, int number) {
+    int result = array[index];
+    for (long unsigned int i = index; i < array.size(); ++i) {
+        if (array[i] < result && number != array[i]) {
+            return array[i];
         }
     }
     return result;
@@ -49,7 +59,7 @@ std::vector<int> solve(std::vector<int> array,
                        std::vector<int> answer,
                        long unsigned int start_index) {
     long unsigned int rem_index = 0;
-    int flag = 0;
+    long unsigned int rem_low_index = 0;
     std::vector<int> result;
     std::vector<int> answ = answer;
     result.clear();
@@ -65,9 +75,20 @@ std::vector<int> solve(std::vector<int> array,
     for (long unsigned int sub_index = calc_index; sub_index < array.size(); ++sub_index) {
         result.push_back(array[sub_index]);
         for (long unsigned int index = sub_index + 1; index < array.size(); ++index) {
-            if (result.back() > result[result.size() - 2] && array[index] != result.back()) {
-                if (array[index] < result.back()) {
-                    result.push_back(array[index]);
+            if (result.back() > result[result.size() - 2]) {
+                if (array[index] < result.back() && checkgreaternumber(array,array[index],index)) {
+                    result.push_back(fmin(array,index,result.back()));
+                    rem_low_index = 0;
+                } else {
+                    if (rem_low_index == 0) {
+                        rem_low_index = index;
+                    }
+                    if (rem_low_index != 0 && index == array.size() - 1) {
+                        int insert_value = fmin(array,rem_low_index,result.back());
+                        if (insert_value != -1) {
+                            result.push_back(insert_value);
+                        }
+                    }
                 }
             } else {
                 if (checkgreaternumber(array, array[index], index)
