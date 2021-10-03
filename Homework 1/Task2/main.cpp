@@ -1,46 +1,60 @@
 #include <iostream>
 #include <stack>
 #include <string>
+#include <vector>
+#include <regex>
+#include <algorithm>
 
-inline bool isRight(char rb) {
-    return (')' == rb || '}' == rb || ']' == rb);
+inline bool isRight(char bracket) {
+    return (')' == bracket || '}' == bracket || ']' == bracket);
 }
 
-inline bool LeftBracket(char c) {
-    return ('(' == c || '{' == c || '[' == c);
+inline bool LeftBracket(char bracket) {
+    return ('(' == bracket || '{' == bracket || '[' == bracket);
 }
 
 inline bool Fit(char lb, char rb) {
     return ('(' == lb && ')' == rb) || ('[' == lb && ']' == rb) || ('{' == lb && '}' == rb);
 }
 
-
-int main()
+static std::string trim(std::string str)
 {
-    std::string s = "(())))";
-    //std::cin >> s;
+    str.erase(remove(str.begin(), str.end(), ' '), str.end());
+    return str;
+}
+
+int main() {
+    std::string input, str;
+    std::getline(std::cin, input);
+    str = trim(input);
     std::stack<char> stack;
-    for(std::string::const_iterator it(s.begin()), itEnd(s.end()); it != itEnd; ++it)
-    {
-        if(LeftBracket(*it))
-        {
+    std::vector<char> memory;
+    if (isRight(str[0])) {
+        std::cout << "0" << std::endl;
+        return 0;
+    }
+    for (std::string::const_iterator it(str.begin()), itEnd(str.end()); it != itEnd; ++it) {
+        if (std::isspace(*it)) {
+            continue;
+        }
+        if (LeftBracket(*it)) {
             stack.push(*it);
-        }
-        else if(Fit(stack.top(), *it))
-        {
+            memory.push_back(*it);
+        } else if (!stack.empty() && Fit(stack.top(), *it)) {
             stack.pop();
-        }
-        else
-        {
+            memory.push_back(*it);
+        } else {
             stack.push(*it);
             break;
         }
     }
-    std::cout << stack.size() << std::endl;
+
     if (stack.empty()) {
         std::cout << "CORRECT" << std::endl;
+        return 0;
     } else {
-        std::cout << (isRight(stack.top()) ? s.length() - stack.size() : stack.size()) << std::endl;
+        std::cout << memory.size() << std::endl;
     }
+
     return 0;
 }
