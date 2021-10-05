@@ -5,12 +5,10 @@
 int findMinIndex(std::vector<int> arrayA, std::vector<int> arrayB) {
 
     std::vector<int> result;
-    for (long unsigned int i = 0; i < arrayA.size(); ++i) {
-        result.push_back(std::max(arrayA[i], arrayB[i]));
-    }
     int min = result[0];
     long unsigned int minIndex = 0;
-    for (long unsigned int i = 0; i < result.size(); ++i) {
+    for (long unsigned int i = 0; i < arrayA.size(); ++i) {
+        result.push_back(std::max(arrayA[i], arrayB[i]));
         if (result[i] < min) {
             min = result[i];
             minIndex = i + 1;
@@ -24,13 +22,9 @@ int main() {
     std::vector<std::vector<int>> arrayOfAArrays, arrayOfBArrays;
     std::vector<int> tempArray;
     std::vector<int> command;
-    std::vector<std::vector<int>> stackArray, memoryMatrix;
-    int arrayACount, arrayBCount, arraySize, requestsCount, input, matrixSize;
+    std::vector<std::vector<int>> stackArray;
+    int arrayACount, arrayBCount, arraySize, requestsCount, input;
     std::cin >> arrayACount >> arrayBCount >> arraySize;
-
-    matrixSize = std::max(arrayACount, arrayBCount);
-    memoryMatrix.resize(matrixSize);
-
 
     for (int index = 0; index < arrayACount + arrayBCount; ++index) {
         for (int subIndex = 0; subIndex < arraySize; ++subIndex) {
@@ -41,9 +35,6 @@ int main() {
             arrayOfBArrays.push_back(tempArray);
         } else {
             arrayOfAArrays.push_back(tempArray);
-        }
-        if (index < matrixSize) {
-            memoryMatrix[index].resize(matrixSize);
         }
         tempArray.clear();
     }
@@ -60,14 +51,8 @@ int main() {
     }
 
     for (long unsigned int index = 0; index < stackArray.size(); ++index) {
-        if (memoryMatrix[stackArray[index][0]][stackArray[index][1]] == 0) {
-            memoryMatrix[stackArray[index][0]][stackArray[index][1]] =
-                    findMinIndex(arrayOfAArrays[stackArray[index][0]],
-                                 arrayOfBArrays[stackArray[index][1]]);
-            memoryMatrix[stackArray[index][1]][stackArray[index][0]] =
-                    memoryMatrix[stackArray[index][0]][stackArray[index][1]];
-        }
-        std::cout << memoryMatrix[stackArray[index][0]][stackArray[index][1]] << std::endl;
+        std::cout << findMinIndex(arrayOfAArrays[stackArray[index][0]],
+                                  arrayOfBArrays[stackArray[index][1]]) << std::endl;
     }
 
     return 0;
